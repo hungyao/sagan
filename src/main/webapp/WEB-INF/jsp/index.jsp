@@ -128,7 +128,7 @@
   </div>
 
   <div id="title">
-    World Population
+    Aurora LIVE
   </div>
 
 <div id="twitfeed">
@@ -222,68 +222,95 @@ new TWTR.Widget({
       $.getJSON('aurora/now', {}, function(data, textStatus) {
     	  window.data = data;
 
-    	  var buffer = [];
-    	  
-    	  // Northern hemisphere
-    	  for (i=0;i<data.n.length;i++) {
-    		 for (j=0;j<data.n[i].length;j++) {
-    			if (data.n[i][j] == 0) {
-    				continue;
-    			}
-				var lonlat = conv_xy_to_latlong(i, j, true);
-				buffer.push(lonlat[1]);
-				buffer.push(lonlat[0]);
-				buffer.push(data.n[i][j]/50);
-    		 }  
+    	  var movement = 0.1;
+    	  for (var t=0;t<2;t++) {
+	    	  var buffer = [];
+	    	  
+	    	  // Northern hemisphere
+	    	  for (i=0;i<data.n.length;i++) {
+	    		 for (j=0;j<data.n[i].length;j++) {
+	    			if (data.n[i][j] == 0) {
+	    				continue;
+	    			}
+					var lonlat = conv_xy_to_latlong(i, j, true);
+					var intensity = data.n[i][j]/50;
+					
+					var delta = (((i + j + t) % 2) - 1) * movement * intensity;
+      
+					buffer.push(lonlat[1]);
+					buffer.push(lonlat[0]);
+					buffer.push(intensity + delta);
+	    		 }  
+	    	  }
+	    	  
+	     	  // Southern hemisphere
+	    	  for (i=0;i<data.s.length;i++) {
+	    		 for (j=0;j<data.s[i].length;j++) {
+	    			if (data.s[i][j] == 0) {
+	    				continue;
+	    			}
+					var lonlat = conv_xy_to_latlong(i, j, false);
+					var intensity = data.s[i][j]/50;
+					
+					var delta = (((i + j + t) % 2) - 1) * movement * intensity;
+					
+					buffer.push(lonlat[1]);
+					buffer.push(lonlat[0]);
+					buffer.push(intensity + delta);
+	    		 }  
+	    	  }   	  
+	    	  globe.addData(buffer, {format: 'magnitude', name: "" + t, animated: true});
     	  }
-     	  // Southern hemisphere
-    	  for (i=0;i<data.s.length;i++) {
-    		 for (j=0;j<data.s[i].length;j++) {
-    			if (data.s[i][j] == 0) {
-    				continue;
-    			}
-				var lonlat = conv_xy_to_latlong(i, j, false);
-				buffer.push(lonlat[1]);
-				buffer.push(lonlat[0]);
-				buffer.push(data.s[i][j]/50);
-    		 }  
-    	  }   	  
-    	  globe.addData(buffer, {format: 'magnitude', animated: true});
           globe.createPoints();
           settime(globe,0)();
           globe.animate();
       });
-    }
-
-  function conv_xy_to_latlong(x,y,NorS) {
-  //NorS: true = north; false = south;
-
-      var latitude;
-      var longitude;
-      var lower_lat = 34;
-      var img_w = 200;
-      var img_h = 200;
       
-      // 0 < x < img_w maps to -180 < x < 180
-      longitude = x * 360 / img_w - 180 ;
+      var conv_xy_to_latlong = function(x,y,NorS) {
+    	  //NorS: true = north; false = south;
 
-      if (NorS) {
-          //north
-          // y: 0 to 200 maps 90 to 34
-          latitude = y * -1 * (90 - lower_lat)/img_h + 90;   
-      } else {
-          //south
-          // y: 0 to 200 maps -34 to -90
-          latitude = y * (-90 + lower_lat)/img_h - lower_lat;   
-      }
+    	      var latitude;
+    	      var longitude;
+    	      var lower_lat = 34;
+    	      var img_w = 200;
+    	      var img_h = 200;
+    	      
+    	      // 0 < x < img_w maps to -180 < x < 180
+    	      longitude = x * 360 / img_w - 180 ;
 
-      //console.log('long:'+longitude);
-      //console.log('lat:'+latitude);
-      return [longitude,latitude];
+    	      if (NorS) {
+    	          //north
+    	          // y: 0 to 200 maps 90 to 34
+    	          latitude = y * -1 * (90 - lower_lat)/img_h + 90;   
+    	      } else {
+    	          //south
+    	          // y: 0 to 200 maps -34 to -90
+    	          latitude = y * (-90 + lower_lat)/img_h - lower_lat;   
+    	      }
 
+    	      //console.log('long:'+longitude);
+    	      //console.log('lat:'+latitude);
+    	      return [longitude,latitude];
+
+    	  };
+      
+  	$(function() {
+
+		var i = 0;
+		var code = function() {
+			console.log("at step " + i + " using globe " + (i %2));
+			new TWEEN.Tween(globe).to({time: i % 2},500).easing(TWEEN.Easing.Cubic.EaseOut).start();
+			i++;
+		};
+		setInterval(code, 500);
+	});
   }
 
-  </script>
+
+
+
+
+	</script>
 
   </body>
 
