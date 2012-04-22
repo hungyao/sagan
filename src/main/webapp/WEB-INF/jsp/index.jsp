@@ -191,7 +191,18 @@
 				buffer.push(data.n[i][j]/50);
     		 }  
     	  }
-    	  
+     	  // Southern hemisphere
+    	  for (i=0;i<data.s.length;i++) {
+    		 for (j=0;j<data.s[i].length;j++) {
+    			if (data.s[i][j] == 0) {
+    				continue;
+    			}
+				var lonlat = conv_xy_to_latlong(i, j, false);
+				buffer.push(lonlat[1]);
+				buffer.push(lonlat[0]);
+				buffer.push(data.s[i][j]/50);
+    		 }  
+    	  }   	  
     	  globe.addData(buffer, {format: 'magnitude', animated: true});
           globe.createPoints();
           settime(globe,0)();
@@ -209,14 +220,16 @@
       var img_h = 200;
       
       // 0 < x < img_w maps to -180 < x < 180
-      longitude = (x - img_w/2) * -1 * 180 / img_w/2;
+      longitude = x * 360 / img_w - 180 ;
 
       if (NorS) {
           //north
+          // y: 0 to 200 maps 90 to 34
           latitude = y * -1 * (90 - lower_lat)/img_h + 90;   
       } else {
           //south
-          latitude = y * (90 + lower_lat)/img_h - lower_lat;   
+          // y: 0 to 200 maps -34 to -90
+          latitude = y * (-90 + lower_lat)/img_h - lower_lat;   
       }
 
       //console.log('long:'+longitude);
