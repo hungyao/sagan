@@ -20,6 +20,9 @@ import sagan.model.AuroraData;
 
 public class Converter extends Component{
 
+	enum Hemisphere {
+		NORTH, SOUTH
+	}
 	/**
 	 * @param args
 	 */
@@ -71,8 +74,8 @@ bufferedImage.setRGB(x, y, rgb);
 			}
 		
 		//Now that you have a BufferImge instance to work on, access its pixels + return a 2-d array for each image
-		double[][] n = manRGBArray(imgNorthPX);
-		double [][] s = manRGBArray(imgSouthPX);
+		double[][] n = manRGBArray(imgNorthPX, Hemisphere.NORTH);
+		double [][] s = manRGBArray(imgSouthPX, Hemisphere.SOUTH);
 		
 		AuroraData data = new AuroraData();
 		data.setN(n);
@@ -80,13 +83,21 @@ bufferedImage.setRGB(x, y, rgb);
 		return data;
     }
     
-    private double[][] manRGBArray(BufferedImage image){
+    private double[][] manRGBArray(BufferedImage image, Hemisphere hemi){
     	double[][] rgbArray = new double[200][200];
 		int rgb = 3096;//Don't ask why
 		int x=0;
-		int y=0;
-		for(x=0; x<200; x++){ //loop x axis of the image
-			for(y=0; y<200; y++) {//loop y axis
+		int y = 0;
+		for (x = 0; x < 200; x++) { // loop x axis of the image
+			for (y = 0; y < 200; y++) {// loop y axis
+				// remove arrow or text
+				if (hemi == Hemisphere.NORTH && (x > 389 / 2 && y > 248 / 2)
+						|| (y > 382 / 2)) {
+					continue;
+				} else if (hemi == Hemisphere.SOUTH && x > 389 / 2
+						&& y < 142 / 2) {
+					continue;
+				}
 				rgb = image.getRGB(2*x, 2*y);
 			    int alpha = ((rgb >> 24) & 0xff); 
 			    int red = ((rgb >> 16) & 0xff); 
