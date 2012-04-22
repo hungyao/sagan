@@ -143,6 +143,7 @@
       var i, tweens = [];
 
       var settime = function(globe, t) {
+    	  console.log("settime " + t);
         return function() {
           new TWEEN.Tween(globe).to({time: t/years.length},500).easing(TWEEN.Easing.Cubic.EaseOut).start();
           var y = document.getElementById('year'+years[t]);
@@ -177,7 +178,7 @@
       $.getJSON('aurora/now', {}, function(data, textStatus) {
     	  window.data = data;
 
-    	  var movement = 0.5;
+    	  var movement = 0.1;
     	  for (var t=0;t<2;t++) {
 	    	  var buffer = [];
 	    	  
@@ -220,47 +221,51 @@
           settime(globe,0)();
           globe.animate();
       });
-    }
-
-  function conv_xy_to_latlong(x,y,NorS) {
-  //NorS: true = north; false = south;
-
-      var latitude;
-      var longitude;
-      var lower_lat = 34;
-      var img_w = 200;
-      var img_h = 200;
       
-      // 0 < x < img_w maps to -180 < x < 180
-      longitude = x * 360 / img_w - 180 ;
+      var conv_xy_to_latlong = function(x,y,NorS) {
+    	  //NorS: true = north; false = south;
 
-      if (NorS) {
-          //north
-          // y: 0 to 200 maps 90 to 34
-          latitude = y * -1 * (90 - lower_lat)/img_h + 90;   
-      } else {
-          //south
-          // y: 0 to 200 maps -34 to -90
-          latitude = y * (-90 + lower_lat)/img_h - lower_lat;   
-      }
+    	      var latitude;
+    	      var longitude;
+    	      var lower_lat = 34;
+    	      var img_w = 200;
+    	      var img_h = 200;
+    	      
+    	      // 0 < x < img_w maps to -180 < x < 180
+    	      longitude = x * 360 / img_w - 180 ;
 
-      //console.log('long:'+longitude);
-      //console.log('lat:'+latitude);
-      return [longitude,latitude];
+    	      if (NorS) {
+    	          //north
+    	          // y: 0 to 200 maps 90 to 34
+    	          latitude = y * -1 * (90 - lower_lat)/img_h + 90;   
+    	      } else {
+    	          //south
+    	          // y: 0 to 200 maps -34 to -90
+    	          latitude = y * (-90 + lower_lat)/img_h - lower_lat;   
+    	      }
 
-  }
+    	      //console.log('long:'+longitude);
+    	      //console.log('lat:'+latitude);
+    	      return [longitude,latitude];
 
-
-	$(function() {
+    	  };
+      
+  	$(function() {
 
 		var i = 0;
 		var code = function() {
 			console.log("at step " + i + " using globe " + (i %2));
-			settime(globe, i % 2);
+			new TWEEN.Tween(globe).to({time: i % 2},500).easing(TWEEN.Easing.Cubic.EaseOut).start();
 			i++;
 		};
-		setInterval(code, 5000);
+		setInterval(code, 500);
 	});
+  }
+
+
+
+
+
 	</script>
 
   </body>
