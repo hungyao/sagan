@@ -1,5 +1,6 @@
 package sagan;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -70,8 +71,8 @@ bufferedImage.setRGB(x, y, rgb);
 			}
 		
 		//Now that you have a BufferImge instance to work on, access its pixels + return a 2-d array for each image
-		int[][] n = manRGBArray(imgNorthPX);
-		int [][] s = manRGBArray(imgSouthPX);
+		double[][] n = manRGBArray(imgNorthPX);
+		double [][] s = manRGBArray(imgSouthPX);
 		
 		AuroraData data = new AuroraData();
 		data.setN(n);
@@ -79,8 +80,8 @@ bufferedImage.setRGB(x, y, rgb);
 		return data;
     }
     
-    private int[][] manRGBArray(BufferedImage image){
-    	int[][] rgbArray = new int[400][400];
+    private double[][] manRGBArray(BufferedImage image){
+    	double[][] rgbArray = new double[400][400];
 		int rgb = 3096;//Don't ask why
 		int x=0;
 		int y=0;
@@ -94,12 +95,47 @@ bufferedImage.setRGB(x, y, rgb);
 			    // Manipulate the r, g, b, and a values.
 			    rgb = (alpha << 24) | (red << 16) | (green << 8) | blue; 
 			    imgNorthPX.setRGB(x, y, rgb);
-			    rgbArray[x][y] = rgb;
+			    rgbArray[x][y] = getIntensity(alpha, red, green, blue);
 			}
 		}
     return rgbArray;
 }
 
+    public double getIntensity(int alpha, int red, int green, int blue) {
+    	if (alpha == 0) {
+    		return 0;
+    	}
+    	
+    	// bottom of scale is 0.0 and top of scale is 10.0.
+    	float[] hsbvals = new float[3];
+    	hsbvals = Color.RGBtoHSB(red, green, blue, hsbvals);
+    	
+    	double intensity = 0;
+    	
+		if (hsbvals[0] > 200 / 360.0) {
+			// goes from 0,0,255 to 255,255,255 from 10^-2 to 10^-1
+			intensity = -1 - hsbvals[1] / 1.0;
+		} else if (hsbvals[0] > 0.39 && hsbvals[0] < 0.6) {
+			// from 255,255,255 to 255,255,0 from 10^-1 to 10^-0.5
+			intensity = -0.5 - (hsbvals[0] -0.39)/(0.6-0.39) * 0.5;
+		} else if (hsbvals[0] <= 0.39) {
+			// from 255,255,0 to 255,0,0 from 10^-0.5 to 10^1
+			intensity = 1 - (hsbvals[0])/0.39 * 0.5;
+		} else {
+			// must be in bottom range from hsbvals[2]
+			intensity = -2 + hsbvals[2];
+			
+//			System.err.println(String.format("not sure for argb: (%d, %d, %d, %d), hsb: (%f, %f, %f)", alpha, red, green, blue, hsbvals[0], hsbvals[1], hsbvals[2] ));
+		}
+//		if (intensity == 1) {
+//			System.err
+//					.println(String
+//							.format("not sure for argb: (%d, %d, %d, %d), hsb: (%f, %f, %f)",
+//									alpha, red, green, blue, hsbvals[0],
+//									hsbvals[1], hsbvals[2]));
+//		}
+		return Math.pow(10, intensity);
+    }
  
 //    public static void main(String[] args) {
 // 
@@ -120,5 +156,10 @@ bufferedImage.setRGB(x, y, rgb);
 //        f.pack();
 //        f.setVisible(true);
 //    }
+    
+    public static void main(String args[]) {
+    	Converter c = new Converter();
+    	c.LoadAndConvert();
+    }
 
 }

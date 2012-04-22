@@ -2,26 +2,26 @@ package sagan.model;
 
 public class AuroraData {
 
-	private int[][] n;
-	private int[][] s;
+	private double[][] n;
+	private double[][] s;
 
-	public int[][] getN() {
-		return n;
-	}
-
-	public void setN(int[][] n) {
-		this.n = n;
-	}
-
-	public int[][] getS() {
+	public double[][] getS() {
 		return s;
 	}
 
-	public void setS(int[][] s) {
+	public void setS(double[][] s) {
 		this.s = s;
+	}
+
+	public double[][] getN() {
+		return n;
+	}
+
+	public void setN(double[][] n) {
+		this.n = n;
 	}
 
 	public AuroraData() {
 	}
-	
+
 }
