@@ -163,7 +163,7 @@
       }
 
       TWEEN.start();
-
+	/*
       $.getJSON('static/population909500.json', {}, function(data, textStatus) {
     	  window.data = data;
           for (i=0;i<data.length;i++) {
@@ -173,16 +173,40 @@
           settime(globe,0)();
           globe.animate();
       });
+      */
+      $.getJSON('aurora/now', {}, function(data, textStatus) {
+    	  window.data = data;
+
+    	  var buffer = [];
+    	  
+    	  // Northern hemisphere
+    	  for (i=0;i<data.n.length;i++) {
+    		 for (j=0;j<data.n[i].length;j++) {
+    			if (data.n[i][j] == 0) {
+    				continue;
+    			}
+				var lonlat = conv_xy_to_latlong(i, j, true);
+				buffer.push(lonlat[0]);
+				buffer.push(lonlat[1]);
+				buffer.push(data.n[i][j]);
+    		 }  
+    	  }
+    	  
+    	  globe.addData(buffer, {format: 'magnitude', animated: true});
+          globe.createPoints();
+          settime(globe,0)();
+          globe.animate();
+      });
     }
 
   function conv_xy_to_latlong(x,y,NorS) {
   //NorS: true = north; false = south;
 
-      var int latitude;
-      var int longitude;
-      var int lower_lat = 34;
-      var int img_w = 400;
-      var int img_h = 400;
+      var latitude;
+      var longitude;
+      var lower_lat = 34;
+      var img_w = 400;
+      var img_h = 400;
       
       // 0 < x < img_w maps to -180 < x < 180
       longitude = (x - img_w/2) * -1 * 180 / img_w/2;
@@ -195,8 +219,8 @@
           latitude = y * (90 + lower_lat)/img_h - lower_lat;   
       }
 
-      console.log('long:'+longitude);
-      console.log('lat:'+latitude);
+      //console.log('long:'+longitude);
+      //console.log('lat:'+latitude);
       return [longitude,latitude];
 
   }
