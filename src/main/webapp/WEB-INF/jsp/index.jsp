@@ -18,6 +18,14 @@
         height: 100%;
       }
 
+		#space-weather {
+		 font-size: 11px;
+        position: absolute;
+        top: 50px;
+        border-radius: 3px;
+        right: 10px;
+        padding: 10px;
+		}
       #twitfeed {
 
         font-size: 11px;
@@ -131,6 +139,34 @@
     Aurora LIVE
   </div>
 
+<div id="space-weather">
+
+	<table class="current_conditions">
+		<caption>
+			Current Geomagnetic Field Conditions at<br> <span
+				id="measure-time"></span> <abbr title="Universal Time">UT</abbr>
+		</caption>
+		<tbody>
+			<tr>
+				<th>Zones</th>
+				<th>Activity</th>
+			</tr>
+			<tr>
+				<td>Polar</td>
+				<td id="pol_status"></td>
+			</tr>
+			<tr>
+				<td>Auroral</td>
+				<td id="aur_status"></td>
+			</tr>
+			<tr>
+				<td>Sub-Auroral</td>
+				<td id="sub_status"></td>
+			</tr>
+		</tbody>
+	</table>
+
+</div>
 <div id="twitfeed">
 <script charset="utf-8" src="http://widgets.twimg.com/j/2/widget.js"></script>
 <script>
@@ -306,15 +342,16 @@ new TWTR.Widget({
 		
 		
 		var parseResponse = function(status) {
-			var patt = '.*</th>(\w+)</td>';
+			var patt = /.*<th .*>\w+<\/th><td .*>(\w+)<\/td>/g;
 			return patt.exec(status)[1];
 		};
 		
-		$.getJSON('http://www.spaceweather.gc.ca/apps/conditions/php/ajax/get_current_conditions.php', {'lang': 'en'}, function(data, textStatus) {
+		$.getJSON('aurora/weather', {}, function(data, textStatus) {
+			console.log("received " + data);
 			// sample response: {"condition_time":"Date : 2012-04-22 Time : 22:00","POL":"Polar<\/th>Quiet<\/td>","AUR":"Auroral<\/th>Quiet<\/td>","SUB":"Sub-Auroral<\/th>Quiet<\/td>"}
 			$('#measure-time').html(data.condition_time);
 			$('#pol_status').html(parseResponse(data.POL));
-			$('#pol_status').html(parseResponse(data.AUR));
+			$('#aur_status').html(parseResponse(data.AUR));
 			$('#sub_status').html(parseResponse(data.SUB));
 		});
 		
