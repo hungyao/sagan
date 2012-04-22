@@ -175,6 +175,32 @@
       });
     }
 
+  function conv_xy_to_latlong(x,y,NorS) {
+  //NorS: true = north; false = south;
+
+      var int latitude;
+      var int longitude;
+      var int lower_lat = 34;
+      var int img_w = 400;
+      var int img_h = 400;
+      
+      // 0 < x < img_w maps to -180 < x < 180
+      longitude = (x - img_w/2) * -1 * 180 / img_w/2;
+
+      if (NorS) {
+          //north
+          latitude = y * -1 * (90 - lower_lat)/img_h + 90;   
+      } else {
+          //south
+          latitude = y * (90 + lower_lat)/img_h - lower_lat;   
+      }
+
+      console.log('long:'+longitude);
+      console.log('lat:'+latitude);
+      return [longitude,latitude];
+
+  }
+
   </script>
 
   </body>
