@@ -186,9 +186,9 @@
     				continue;
     			}
 				var lonlat = conv_xy_to_latlong(i, j, true);
-				buffer.push(lonlat[0]);
 				buffer.push(lonlat[1]);
-				buffer.push(data.n[i][j]);
+				buffer.push(lonlat[0]);
+				buffer.push(data.n[i][j]/50);
     		 }  
     	  }
     	  
@@ -205,8 +205,8 @@
       var latitude;
       var longitude;
       var lower_lat = 34;
-      var img_w = 400;
-      var img_h = 400;
+      var img_w = 200;
+      var img_h = 200;
       
       // 0 < x < img_w maps to -180 < x < 180
       longitude = (x - img_w/2) * -1 * 180 / img_w/2;

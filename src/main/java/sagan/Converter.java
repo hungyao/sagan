@@ -81,20 +81,20 @@ bufferedImage.setRGB(x, y, rgb);
     }
     
     private double[][] manRGBArray(BufferedImage image){
-    	double[][] rgbArray = new double[400][400];
+    	double[][] rgbArray = new double[200][200];
 		int rgb = 3096;//Don't ask why
 		int x=0;
 		int y=0;
-		for(x=0; x<400; x++){ //loop x axis of the image
-			for(y=0; y<400; y++) {//loop y axis
-				rgb = image.getRGB(x, y);
+		for(x=0; x<200; x++){ //loop x axis of the image
+			for(y=0; y<200; y++) {//loop y axis
+				rgb = image.getRGB(2*x, 2*y);
 			    int alpha = ((rgb >> 24) & 0xff); 
 			    int red = ((rgb >> 16) & 0xff); 
 			    int green = ((rgb >> 8) & 0xff); 
 			    int blue = ((rgb ) & 0xff); 
 			    // Manipulate the r, g, b, and a values.
-			    rgb = (alpha << 24) | (red << 16) | (green << 8) | blue; 
-			    imgNorthPX.setRGB(x, y, rgb);
+			    //rgb = (alpha << 24) | (red << 16) | (green << 8) | blue; 
+			    //imgNorthPX.setRGB(x, y, rgb);
 			    rgbArray[x][y] = getIntensity(alpha, red, green, blue);
 			}
 		}
