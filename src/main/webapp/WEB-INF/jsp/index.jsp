@@ -259,6 +259,22 @@
 			i++;
 		};
 		setInterval(code, 500);
+		
+		
+		var parseResponse = function(status) {
+			var patt = '.*</th>(\w+)</td>';
+			return patt.exec(status)[1];
+		};
+		
+		$.getJSON('http://www.spaceweather.gc.ca/apps/conditions/php/ajax/get_current_conditions.php', {'lang': 'en'}, function(data, textStatus) {
+			// sample response: {"condition_time":"Date : 2012-04-22 Time : 22:00","POL":"Polar<\/th>Quiet<\/td>","AUR":"Auroral<\/th>Quiet<\/td>","SUB":"Sub-Auroral<\/th>Quiet<\/td>"}
+			$('#measure-time').html(data.condition_time);
+			$('#pol_status').html(parseResponse(data.POL));
+			$('#pol_status').html(parseResponse(data.AUR));
+			$('#sub_status').html(parseResponse(data.SUB));
+		});
+		
+		
 	});
   }
 
@@ -268,6 +284,6 @@
 
 	</script>
 
-  </body>
+</body>
 
 </html>
