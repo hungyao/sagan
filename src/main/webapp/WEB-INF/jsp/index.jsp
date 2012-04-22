@@ -123,6 +123,7 @@
     <span>This is a Chrome Experiment</span>
   </a>
 
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
   <script type="text/javascript" src="static/third-party/Three/ThreeWebGL.js"></script>
   <script type="text/javascript" src="static/third-party/Three/ThreeExtras.js"></script>
   <script type="text/javascript" src="static/third-party/Three/RequestAnimationFrame.js"></script>
@@ -161,27 +162,17 @@
         y.addEventListener('mouseover', settime(globe,i), false);
       }
 
-      var xhr;
       TWEEN.start();
 
-
-      xhr = new XMLHttpRequest();
-      xhr.open('GET', 'static/population909500.json', true);
-      xhr.onreadystatechange = function(e) {
-        if (xhr.readyState === 4) {
-          if (xhr.status === 200) {
-            var data = JSON.parse(xhr.responseText);
-            window.data = data;
-            for (i=0;i<data.length;i++) {
-              globe.addData(data[i][1], {format: 'magnitude', name: data[i][0], animated: true});
-            }
-            globe.createPoints();
-            settime(globe,0)();
-            globe.animate();
+      $.getJSON('static/population909500.json', {}, function(data, textStatus) {
+    	  window.data = data;
+          for (i=0;i<data.length;i++) {
+            globe.addData(data[i][1], {format: 'magnitude', name: data[i][0], animated: true});
           }
-        }
-      };
-      xhr.send(null);
+          globe.createPoints();
+          settime(globe,0)();
+          globe.animate();
+      });
     }
 
   </script>
