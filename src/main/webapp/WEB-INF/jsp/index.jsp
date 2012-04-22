@@ -190,7 +190,7 @@
 					var lonlat = conv_xy_to_latlong(i, j, true);
 					var intensity = data.n[i][j]/50;
 					
-					var delta = (((i + j + t) % 3) - 1) * movement * intensity;
+					var delta = (((i + j + t) % 2) - 1) * movement * intensity;
       
 					buffer.push(lonlat[1]);
 					buffer.push(lonlat[0]);
@@ -207,14 +207,14 @@
 					var lonlat = conv_xy_to_latlong(i, j, false);
 					var intensity = data.s[i][j]/50;
 					
-					var delta = (((i + j + t) % 3) - 1) * movement * intensity;
+					var delta = (((i + j + t) % 2) - 1) * movement * intensity;
 					
 					buffer.push(lonlat[1]);
 					buffer.push(lonlat[0]);
 					buffer.push(intensity + delta);
 	    		 }  
 	    	  }   	  
-	    	  globe.addData(buffer, {format: 'magnitude', animated: true});
+	    	  globe.addData(buffer, {format: 'magnitude', name: "" + t, animated: true});
     	  }
           globe.createPoints();
           settime(globe,0)();
@@ -255,7 +255,7 @@
 
 		var i = 0;
 		var code = function() {
-			console.log("at step " + i);
+			console.log("at step " + i + " using globe " + (i %2));
 			settime(globe, i % 2);
 			i++;
 		};
