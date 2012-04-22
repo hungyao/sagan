@@ -17,7 +17,12 @@ DAT.Globe = function(container, colorFn) {
 
   colorFn = colorFn || function(x) {
     var c = new THREE.Color();
-    c.setHSV( ( 0.6 - ( x * 0.5 ) ), 1.0, 1.0 );
+    //c.setHSV( ( 0.6 - ( x * 0.5 ) ), 1.0, 1.0 );
+
+    // hack, should use ColorFn
+    //x is roughly between 0 < x < 1.17
+    c.setHSV( ( x / 1.18) , 1.0, 1.0 );
+
     return c;
   };
 

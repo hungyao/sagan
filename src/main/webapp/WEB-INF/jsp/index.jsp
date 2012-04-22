@@ -18,6 +18,18 @@
         height: 100%;
       }
 
+      #twitfeed {
+
+        font-size: 11px;
+        position: absolute;
+	float: right;
+        bottom: 50px;
+        border-radius: 3px;
+        right: 10px;
+        padding: 10px;
+
+      }
+
       #info {
 
         font-size: 11px;
@@ -91,7 +103,7 @@
       #ce {
         width: 107px;
         height: 55px;
-        display: block;
+        display: none;
         position: absolute;
         bottom: 15px;
         left: 20px;
@@ -106,7 +118,7 @@
   <div id="container"></div>
 
   <div id="info">
-    <strong><a href="http://www.chromeexperiments.com/globe">WebGL Globe</a></strong> <span class="bull">&bull;</span> Created by the Google Data Arts Team <span class="bull">&bull;</span> Data acquired from <a href="http://sedac.ciesin.columbia.edu/gpw/">SEDAC</a>
+    <strong><a href="http://www.chromeexperiments.com/globe">WebGL Globe</a></strong> <span class="bull">&bull;</span> Created by the Google Data Arts Team <span class="bull">&bull;</span> Data acquired from <a href="http://www.swpc.noaa.gov">NOAA SWPC</a>
   </div>
 
   <div id="currentInfo">
@@ -118,6 +130,39 @@
   <div id="title">
     World Population
   </div>
+
+<div id="twitfeed">
+<script charset="utf-8" src="http://widgets.twimg.com/j/2/widget.js"></script>
+<script>
+new TWTR.Widget({
+  version: 2,
+  type: 'search',
+  search: '#aurora',
+  interval: 30000,
+  title: '#aurora',
+  subject: 'Aurora Twitter Feed',
+  width: 250,
+  height: 300,
+  theme: {
+    shell: {
+      background: '#000000',
+      color: '#cccccc'
+    },
+    tweets: {
+      background: '#333333',
+      color: '#cccccc',
+      links: '#3ca8e8'
+    }
+  },
+  features: {
+    scrollbar: true,
+    loop: true,
+    live: true,
+    behavior: 'default'
+  }
+}).render().start();
+</script>
+</div>
 
   <a id="ce" href="http://www.chromeexperiments.com/globe">
     <span>This is a Chrome Experiment</span>
