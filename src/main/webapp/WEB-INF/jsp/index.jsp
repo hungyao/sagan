@@ -106,7 +106,7 @@
   <div id="container"></div>
 
   <div id="info">
-    <strong><a href="http://www.chromeexperiments.com/globe">WebGL Globe</a></strong> <span class="bull">&bull;</span> Created by the Google Data Arts Team <span class="bull">&bull;</span> Data acquired from <a href="http://sedac.ciesin.columbia.edu/gpw/">SEDAC</a>
+    <strong><a href="http://www.chromeexperiments.com/globe">Aurora LIVE</a></strong> <span class="bull">&bull;</span> Created by the Google Data Arts Team <span class="bull">&bull;</span> Data acquired from <a href="http://sedac.ciesin.columbia.edu/gpw/">SEDAC</a>
   </div>
 
   <div id="currentInfo">
@@ -116,7 +116,7 @@
   </div>
 
   <div id="title">
-    World Population
+    Aurora LIVE
   </div>
 
   <a id="ce" href="http://www.chromeexperiments.com/globe">
@@ -177,33 +177,45 @@
       $.getJSON('aurora/now', {}, function(data, textStatus) {
     	  window.data = data;
 
-    	  var buffer = [];
-    	  
-    	  // Northern hemisphere
-    	  for (i=0;i<data.n.length;i++) {
-    		 for (j=0;j<data.n[i].length;j++) {
-    			if (data.n[i][j] == 0) {
-    				continue;
-    			}
-				var lonlat = conv_xy_to_latlong(i, j, true);
-				buffer.push(lonlat[1]);
-				buffer.push(lonlat[0]);
-				buffer.push(data.n[i][j]/50);
-    		 }  
+    	  var movement = 0.5;
+    	  for (var t=0;t<2;t++) {
+	    	  var buffer = [];
+	    	  
+	    	  // Northern hemisphere
+	    	  for (i=0;i<data.n.length;i++) {
+	    		 for (j=0;j<data.n[i].length;j++) {
+	    			if (data.n[i][j] == 0) {
+	    				continue;
+	    			}
+					var lonlat = conv_xy_to_latlong(i, j, true);
+					var intensity = data.n[i][j]/50;
+					
+					var delta = (((i + j + t) % 3) - 1) * movement * intensity;
+      
+					buffer.push(lonlat[1]);
+					buffer.push(lonlat[0]);
+					buffer.push(intensity + delta);
+	    		 }  
+	    	  }
+	    	  
+	     	  // Southern hemisphere
+	    	  for (i=0;i<data.s.length;i++) {
+	    		 for (j=0;j<data.s[i].length;j++) {
+	    			if (data.s[i][j] == 0) {
+	    				continue;
+	    			}
+					var lonlat = conv_xy_to_latlong(i, j, false);
+					var intensity = data.s[i][j]/50;
+					
+					var delta = (((i + j + t) % 3) - 1) * movement * intensity;
+					
+					buffer.push(lonlat[1]);
+					buffer.push(lonlat[0]);
+					buffer.push(intensity + delta);
+	    		 }  
+	    	  }   	  
+	    	  globe.addData(buffer, {format: 'magnitude', animated: true});
     	  }
-     	  // Southern hemisphere
-    	  for (i=0;i<data.s.length;i++) {
-    		 for (j=0;j<data.s[i].length;j++) {
-    			if (data.s[i][j] == 0) {
-    				continue;
-    			}
-				var lonlat = conv_xy_to_latlong(i, j, false);
-				buffer.push(lonlat[1]);
-				buffer.push(lonlat[0]);
-				buffer.push(data.s[i][j]/50);
-    		 }  
-    	  }   	  
-    	  globe.addData(buffer, {format: 'magnitude', animated: true});
           globe.createPoints();
           settime(globe,0)();
           globe.animate();
@@ -238,7 +250,18 @@
 
   }
 
-  </script>
+
+	$(function() {
+
+		var i = 0;
+		var code = function() {
+			console.log("at step " + i);
+			settime(globe, i % 2);
+			i++;
+		};
+		setInterval(code, 5000);
+	});
+	</script>
 
   </body>
 
